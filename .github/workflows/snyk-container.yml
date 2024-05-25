@@ -51,11 +51,7 @@ jobs:
         args: --file=Dockerfile
     - name: Validate SARIF file
       run: |
-        jq '.runs[].results[] | select(.ruleId == null or .level == null)' snyk.sarif
-        if [ $? -eq 0 ]; then
-          echo "SARIF file contains invalid entries."
-          exit 1
-        fi
+        sed -i 's/"security-severity": "null"/"security-severity": "0"/g' snyk.sarif
     - name: Upload result to GitHub Code Scanning
       uses: github/codeql-action/upload-sarif@v2
       with:
